@@ -1,0 +1,1 @@
+export const MAXIMO_DE_LATENCIA = 10

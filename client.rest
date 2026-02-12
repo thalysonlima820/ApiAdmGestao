@@ -1,0 +1,40 @@
+@url = http://localhost:3000
+@token = {{authenticate.response.body.accessToken}}
+
+#Auth
+### authenticate
+# @name authenticate
+POST {{url}}/auth/login
+Content-Type: application/json
+
+{
+  "NOME": "teste",
+  "SENHA": "teste"
+}
+
+#Usuarios
+###
+GET {{url}}/usuario
+Authorization: Bearer {{token}}
+
+###
+GET {{url}}/usuario/2
+Authorization: Bearer {{token}}
+
+###
+POST {{url}}/usuario
+Content-Type: application/json
+
+{
+  "CODUSUARIO": "2",
+  "NOME": "teste",
+  "SENHA": "teste",
+  "ROUTEPOLICIES": ["teste1"]
+}
+
+###
+GET {{url}}/telegram
+
+
+###
+GET {{url}}/email

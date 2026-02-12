@@ -1,0 +1,1 @@
+export const EMAIL_CONFIG_KEY = 'email'
