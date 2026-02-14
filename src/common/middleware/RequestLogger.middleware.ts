@@ -2,16 +2,38 @@ import { NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as jwt from 'jsonwebtoken';
 import { logDto } from './dto/log.dto';
 
 export class RequestLoggerMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
     const start = Date.now();
 
+    let codusuario: string | number | null = null;
+
+    const auth =
+      req.headers.authorization ||
+      (req.headers['x-access-token'] as string | undefined) ||
+      (req.headers['token'] as string | undefined) ||
+      (req.headers[`${process.env.AUTH_HEADER}`] as string | undefined);
+
+    if (typeof auth === 'string') {
+      const token = auth.startsWith('Bearer ') ? auth.slice(7) : auth;
+      const decoded: any = jwt.decode(token);
+      codusuario = decoded?.sub ?? null;
+    }
+
     next();
 
     res.on('finish', () => {
-      if (req.originalUrl === '/log' || req.originalUrl === '/email' || req.originalUrl === '/telegram') return;
+      if (
+        req.originalUrl === '/log' ||
+        req.originalUrl === '/email' ||
+        req.originalUrl === '/telegram' ||
+        req.originalUrl === '/log/usuario' ||
+        req.originalUrl === '/log/telegram' 
+      )
+        return;
 
       const tempoSegundos = Number(((Date.now() - start) / 1000).toFixed(2));
 
@@ -24,10 +46,11 @@ export class RequestLoggerMiddleware implements NestMiddleware {
           minute: '2-digit',
           hour12: false,
         }),
-        host: req.headers.host ?? '',
+        host: req.headers.origin ?? '',
         method: req.method,
         url: req.originalUrl,
         duration: tempoSegundos,
+        codusuario: codusuario,
         ip: req.ip,
       };
 

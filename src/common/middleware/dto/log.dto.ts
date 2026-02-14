@@ -5,5 +5,6 @@ export class logDto {
   method: string;
   url: string;
   duration: number;
+  codusuario: string | number | null = null;
   ip: any;
 }

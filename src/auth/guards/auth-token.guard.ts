@@ -67,9 +67,13 @@ export class AuthTokenGuard implements CanActivate {
     }
   }
 
-  private extractTokenFromHeader(request: any): string | undefined {
-    const authorization = request.headers?.authorization;
-    if (!authorization || typeof authorization !== 'string') return;
-    return authorization.split(' ')[1];
-  }
+private extractTokenFromHeader(request: any): string | undefined {
+  const headerName = (process.env.AUTH_HEADER ?? 'biasiamd').toLowerCase();
+  const token = request.headers?.[headerName];
+
+  if (!token || typeof token !== 'string') return;
+
+  return token.trim();
+}
+
 }

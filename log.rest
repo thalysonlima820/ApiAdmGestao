@@ -2,3 +2,7 @@
 
 ###
 GET {{url}}/log
+###
+GET {{url}}/log/usuario
+###
+GET {{url}}/log/telegram

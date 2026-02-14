@@ -9,6 +9,7 @@ import * as path from 'path';
 import { TelegramService } from 'src/apiAdm/telegram/telegram.service';
 import { TELEGRAM_IDS_MONITORAMENTO_SERVIDOR } from '../../apiAdm/telegram/constants/Telegram.constants';
 import { mensagemErroServidor } from 'src/apiAdm/telegram/templates/mensagens.ts';
+import * as jwt from 'jsonwebtoken';
 
 @Catch(HttpException)
 export class MyExceptionFilter<
@@ -20,6 +21,20 @@ export class MyExceptionFilter<
     const ctx = host.switchToHttp();
     const res = ctx.getResponse();
     const req = ctx.getRequest();
+
+    let codusuario: string | number | null = null;
+
+    const auth =
+      req.headers.authorization ||
+      (req.headers['x-access-token'] as string | undefined) ||
+      (req.headers['token'] as string | undefined) ||
+      (req.headers[`${process.env.AUTH_HEADER}`] as string | undefined);
+
+    if (typeof auth === 'string') {
+      const token = auth.startsWith('Bearer ') ? auth.slice(7) : auth;
+      const decoded: any = jwt.decode(token);
+      codusuario = decoded?.sub ?? null;
+    }
 
     const statusCode = exception.getStatus();
     const exceptionRes = exception.getResponse();
@@ -65,6 +80,7 @@ export class MyExceptionFilter<
         statusCode: exceptionRes['code'] ?? statusCode,
         error: exceptionRes['error'] ?? null,
         message: exceptionRes['message'] ?? null,
+        codusuario: codusuario,
         apresentacao: exceptionRes['messageType'],
         telegram: exceptionRes['telegram'],
       };
@@ -83,7 +99,7 @@ export class MyExceptionFilter<
 
           `;
 
-          const title = 'Erro critico no Servidor'
+        const title = 'Erro critico no Servidor';
 
         await this.telegramService.sendToMany(
           alertaMsg,
@@ -93,7 +109,6 @@ export class MyExceptionFilter<
         );
       }
       writeLogErro(dados);
-      console.log('gravarjson');
     }
 
     return res.status(statusCode).json({

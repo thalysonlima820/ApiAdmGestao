@@ -100,8 +100,13 @@ export class AppService {
     );
 
     if (alertaMsg) {
-      const title = 'Alerta Latencia'
-      await this.telegramService.sendToMany(alertaMsg, TELEGRAM_IDS_MONITORAMENTO_SERVIDOR, 'alert', title);
+      const title = 'Alerta Latencia';
+      await this.telegramService.sendToMany(
+        alertaMsg,
+        TELEGRAM_IDS_MONITORAMENTO_SERVIDOR,
+        'alert',
+        title,
+      );
     }
     return { resumo, logs: dados };
   }
@@ -131,6 +136,7 @@ export class AppService {
             route: l.url,
             method: l.method,
             duration: l.duration,
+            codusuario: l.codusuario,
             ip: l.ip,
           })),
         );
@@ -140,5 +146,75 @@ export class AppService {
     }
 
     return allLogs;
+  }
+
+  async getLogUser() {
+    const dados = this.readAllLogs();
+    const hoje = this.hojeBR();
+
+    const logsUsuarioHoje = dados
+      .filter((l) => {
+        const date = String(l?.date ?? '');
+        if (date !== hoje) return false;
+        const url = String(l?.url ?? l?.route ?? '')
+          .trim()
+          .toLowerCase();
+        const isUsuario = url.startsWith('/usuario');
+        const isLogUsuario = url.startsWith('/log/usuario');
+        return isUsuario && !isLogUsuario;
+      })
+      .sort((a, b) =>
+        String(a?.hora ?? '').localeCompare(String(b?.hora ?? '')),
+      );
+
+    return { dados: logsUsuarioHoje };
+  }
+
+  private readAllLogsTelegram() {
+    const logsDir = path.join(process.cwd(), 'logs', 'telegram');
+    if (!fs.existsSync(logsDir)) return [];
+
+    const files = fs.readdirSync(logsDir).filter((f) => f.endsWith('.json'));
+    const allLogs: any[] = [];
+
+    for (const file of files) {
+      const filePath = path.join(logsDir, file);
+
+      try {
+        const content = fs.readFileSync(filePath, 'utf-8').trim();
+        if (!content) continue;
+
+        const parsed = JSON.parse(content);
+        if (!Array.isArray(parsed)) continue;
+
+        allLogs.push(
+          ...parsed.map((l) => ({
+            data: l.data,
+            hora: l.hora,
+            status: l.status,
+            botType: l.botType, // ✅ corrigido
+            chatId: l.chatId,
+            title: l.title, // ✅ corrigido
+          })),
+        );
+      } catch (erro) {
+        console.log('Erro ao ler log:', file, erro);
+      }
+    }
+
+    return allLogs;
+  }
+
+  async getLogTelegram() {
+    const dados = this.readAllLogsTelegram();
+    const hoje = this.hojeBR();
+
+    const logsHoje = dados
+      .filter((l) => String(l?.data ?? '') === hoje) // ✅ corrigido
+      .sort((a, b) =>
+        String(a?.hora ?? '').localeCompare(String(b?.hora ?? '')),
+      );
+
+    return { dados: logsHoje };
   }
 }

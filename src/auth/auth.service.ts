@@ -47,6 +47,18 @@ export class AuthService {
       });
     }
 
+    try {
+      await this.oracle.query(
+        ` UPDATE SITEUSUARIO SET ULTIMO_LOGIN = SYSDATE WHERE CODUSUARIO = :CODUSUARIO`,
+        { CODUSUARIO: usuario.CODUSUARIO },
+      );
+    } catch {
+      AppError.notFound({
+        message: 'Erro ao Atualiza ULTIMO_LOGIN',
+        messageType: 'aviso'
+      })
+    }
+
     const payload = {
       sub: usuario.CODUSUARIO,
       nome: usuario.NOME,

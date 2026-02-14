@@ -3,6 +3,16 @@
 API backend construída com **NestJS**, utilizando **TypeORM**, **Oracle** e **PostgreSQL**, com autenticação via **JWT**, validações globais e configuração por variáveis de ambiente.
 
 ---
+# Repositorio Git
+
+- ApiAdmGestao
+
+---
+
+### gerar chave   RESPONSE_ENC_KEY_BASE64
+node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
+
+---
 
 # Requisitos
 
@@ -112,3 +122,5 @@ Todos os envios (sucesso ou erro) são registrados em:
 - Registrar apenas erros realmente graves
 - Centralizar notificações (Telegram / Email)
 - Manter histórico estruturado de logs
+
+

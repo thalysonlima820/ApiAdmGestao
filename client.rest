@@ -8,33 +8,43 @@ POST {{url}}/auth/login
 Content-Type: application/json
 
 {
-  "NOME": "teste",
-  "SENHA": "teste"
+  "NOME": "pcadmin",
+  "SENHA": "5500"
 }
+###
 
-#Usuarios
+# USUARIOS
 ###
 GET {{url}}/usuario
-Authorization: Bearer {{token}}
-
+biasiamd: {{token}}
 ###
-GET {{url}}/usuario/2
-Authorization: Bearer {{token}}
-
+GET {{url}}/usuario/127
+biasiamd: {{token}}
 ###
 POST {{url}}/usuario
 Content-Type: application/json
 
 {
-  "CODUSUARIO": "2",
-  "NOME": "teste",
-  "SENHA": "teste",
-  "ROUTEPOLICIES": ["teste1"]
+  "CODUSUARIO": "1",
+  "NOME": "pcadmin",
+  "SENHA": "5500",
+  "ROUTEPOLICIES": ["getUsuario", "upsertUsuario"],
+  "EMAIL": "admin@gmail.com"
 }
+###
+PATCH {{url}}/usuario/127
+Content-Type: application/json
 
+{
+  "NOME": "lucas",
+  "ACTIVE": 1
+}
+###
+
+# TELEGRAM
 ###
 GET {{url}}/telegram
 
-
+# EMAIL
 ###
 GET {{url}}/email

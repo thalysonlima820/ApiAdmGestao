@@ -13,4 +13,13 @@ export class AppController {
   getLog() {
     return this.appService.getLog()
   }
+  @Get('log/usuario')
+  getLogUsuario() {
+    return this.appService.getLogUser()
+  }
+  @Get('log/telegram')
+  getLogTelegram() {
+    return this.appService.getLogTelegram()
+  }
+
 }

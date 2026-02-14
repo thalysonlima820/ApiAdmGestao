@@ -1,4 +1,12 @@
-import { IsEnum, IsNotEmpty, IsString, MinLength } from 'class-validator';
+import {
+  IsEmail,
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  MinLength,
+} from 'class-validator';
 import { RoutePolicy } from 'src/auth/enum/route-policy.enum';
 
 export class CreateUsuarioDto {
@@ -15,6 +23,17 @@ export class CreateUsuarioDto {
   @MinLength(4)
   readonly SENHA: string;
 
+  @IsOptional()
+  @IsNumber()
+  readonly IDTELEGRAM?: number;
+
+  @IsOptional()
+  readonly ACTIVE?: any;
+
   @IsEnum(RoutePolicy, { each: true })
   readonly ROUTEPOLICIES: RoutePolicy[];
+
+  @IsNotEmpty()
+  @IsEmail()
+  readonly EMAIL: string;
 }

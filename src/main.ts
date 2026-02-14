@@ -13,7 +13,14 @@ async function bootstrap() {
     }),
   );
 
-  await app.listen(Number(process.env.APP_PORT ?? 3000));
+  app.enableCors({
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'biasiamd'],
+    optionsSuccessStatus: 204,
+  });
+
+  await app.listen(Number(process.env.APP_PORT ?? 3000), '0.0.0.0');
 }
 
 bootstrap();
