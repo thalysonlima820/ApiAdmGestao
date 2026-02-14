@@ -55,7 +55,7 @@ export class HeaderJwtGuard implements CanActivate {
   }
 
   private extractFromCustomHeader(req: any): string | undefined {
-    const headerName = (process.env.AUTH_HEADER ?? 'biasiamd').toLowerCase();
+    const headerName = (process.env.AUTH_HEADER ?? 'admgestao').toLowerCase();
     const token = req.headers?.[headerName];
     return typeof token === 'string' && token.trim() ? token.trim() : undefined;
   }

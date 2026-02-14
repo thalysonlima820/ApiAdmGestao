@@ -16,10 +16,10 @@ Content-Type: application/json
 # USUARIOS
 ###
 GET {{url}}/usuario
-biasiamd: {{token}}
+admgestao: {{token}}
 ###
 GET {{url}}/usuario/127
-biasiamd: {{token}}
+admgestao: {{token}}
 ###
 POST {{url}}/usuario
 Content-Type: application/json

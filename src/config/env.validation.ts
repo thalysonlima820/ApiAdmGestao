@@ -7,8 +7,7 @@ export const envValidationSchema = Joi.object({
   JWT_TOKEN_AUDIENCE: Joi.string().required(),
   JWT_TOKEN_ISSUER: Joi.string().required(),
 
-  // header opcional (se quiser suportar biasiamd)
-  AUTH_HEADER: Joi.string().default('biasiamd'),
+  AUTH_HEADER: Joi.string().default('admgestao'),
 
   // crypto response
   RESPONSE_ENC_KEY_BASE64: Joi.string().required(),

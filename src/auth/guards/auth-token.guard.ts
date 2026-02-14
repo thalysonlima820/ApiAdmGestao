@@ -68,7 +68,7 @@ export class AuthTokenGuard implements CanActivate {
   }
 
 private extractTokenFromHeader(request: any): string | undefined {
-  const headerName = (process.env.AUTH_HEADER ?? 'biasiamd').toLowerCase();
+  const headerName = (process.env.AUTH_HEADER ?? 'admgestao').toLowerCase();
   const token = request.headers?.[headerName];
 
   if (!token || typeof token !== 'string') return;
