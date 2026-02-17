@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <style>
+      body {
+        font-family: Arial, Helvetica, sans-serif;
+        background: #eef2f7;
+        margin: 0;
+        padding: 28px 14px;
+      }
+
+      .container {
+        max-width: 980px;
+        margin: auto;
+      }
+
+      .card {
+        background: #ffffff;
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: 0 10px 24px rgba(2, 6, 23, 0.08);
+        border: 1px solid #e2e8f0;
+      }
+
+      /* Topo */
+      .hero {
+        padding: 18px 20px;
+        color: #ffffff;
+        background: linear-gradient(90deg, #1e40af, #2563eb);
+      }
+
+      .hero-title {
+        margin: 0;
+        font-size: 20px;
+        font-weight: 900;
+        letter-spacing: 0.2px;
+      }
+
+      .hero-subtitle {
+        margin: 6px 0 0;
+        font-size: 12px;
+        opacity: 0.95;
+      }
+
+      .chips {
+        margin-top: 12px;
+      }
+
+      .chip {
+        display: inline-block;
+        font-size: 11px;
+        font-weight: 800;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.16);
+        border: 1px solid rgba(255, 255, 255, 0.28);
+        margin-right: 8px;
+        margin-bottom: 8px;
+        white-space: nowrap;
+      }
+
+      /* Conteúdo */
+      .content {
+        padding: 18px 18px 8px;
+        background: #ffffff;
+      }
+
+      .section {
+        margin: 14px 0;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        background: #f8fafc;
+        overflow: hidden;
+      }
+
+      .section-head {
+        padding: 12px 14px;
+        background: #ffffff;
+        border-bottom: 1px solid #e2e8f0;
+      }
+
+      .section-title {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 900;
+        color: #0f172a;
+      }
+
+      .section-desc {
+        margin: 4px 0 0;
+        font-size: 12px;
+        color: #64748b;
+      }
+
+      .section-body {
+        padding: 12px 12px;
+      }
+
+      /* Footer */
+      .footer {
+        padding: 14px 16px;
+        text-align: center;
+        font-size: 12px;
+        color: #64748b;
+        background: #f8fafc;
+        border-top: 1px solid #e2e8f0;
+      }
+
+      .footer small {
+        display: block;
+        margin-top: 4px;
+        color: #94a3b8;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="card">
+        <!-- TOPO -->
+        <div class="hero">
+          <h1 class="hero-title">📊 Relatório ADM Gestão</h1>
+          <p class="hero-subtitle">
+            Resumo consolidado por filial • Vendas • Meta • Produtividade • Balancete
+          </p>
+
+          <div class="chips">
+            <span class="chip">Automático</span>
+            <span class="chip">Padrão Biasi</span>
+            <span class="chip">Email HTML</span>
+          </div>
+        </div>
+
+        <!-- CONTEÚDO -->
+        <div class="content">
+          <!-- VENDAS -->
+          <div class="section">
+            <div class="section-head">
+              <div class="section-title">Vendas por filial</div>
+              <div class="section-desc">
+                CMV, Venda, NFs, Lucro, Ticket, Margem e Meta
+              </div>
+            </div>
+            <div class="section-body">
+              {{tabela}}
+            </div>
+          </div>
+
+          <!-- RESUMO -->
+          <div class="section">
+            <div class="section-head">
+              <div class="section-title">Resumo geral</div>
+              <div class="section-desc">
+                Total consolidado e progresso da meta
+              </div>
+            </div>
+            <div class="section-body">
+              {{resumo}}
+            </div>
+          </div>
+
+          <!-- PRODUTIVIDADE -->
+          <div class="section">
+            <div class="section-head">
+              <div class="section-title">Produtividade</div>
+              <div class="section-desc">
+                Venda por funcionário • por m² • por check-out
+              </div>
+            </div>
+            <div class="section-body">
+              {{produtividade}}
+            </div>
+          </div>
+
+          <!-- BALANCETE -->
+          <div class="section">
+            <div class="section-head">
+              <div class="section-title">Balancete</div>
+              <div class="section-desc">
+                Previsto x Realizado • Orçamento • Saldo por grupo
+              </div>
+            </div>
+            <div class="section-body">
+              {{balancete}}
+            </div>
+          </div>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="footer">
+          Sistema ADM Gestão • Relatório automático
+          <small>Supermercado Biasi • Gerado via API</small>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

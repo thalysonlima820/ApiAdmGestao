@@ -1,0 +1,9 @@
+@url = http://localhost:3333
+
+# TELEGRAM
+###
+GET {{url}}/telegram
+
+# EMAIL
+###
+GET {{url}}/email

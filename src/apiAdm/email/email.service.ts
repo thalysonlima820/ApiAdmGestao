@@ -5,7 +5,7 @@ import { EmailClient } from './hashing/email.client';
 export class EmailService {
   constructor(private readonly emailClient: EmailClient) {}
   
-  teste(
+  sendEmail(
     to: string[],
     subject: string,
     html: string,

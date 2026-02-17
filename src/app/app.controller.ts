@@ -3,7 +3,9 @@ import { AppService } from './app.service';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(
+    private readonly appService: AppService,
+  ) {}
   @Get()
   getHello(): string {
     return this.appService.getHello();
@@ -11,15 +13,14 @@ export class AppController {
 
   @Get('log')
   getLog() {
-    return this.appService.getLog()
+    return this.appService.getLog();
   }
   @Get('log/usuario')
   getLogUsuario() {
-    return this.appService.getLogUser()
+    return this.appService.getLogUser();
   }
   @Get('log/telegram')
   getLogTelegram() {
-    return this.appService.getLogTelegram()
+    return this.appService.getLogTelegram();
   }
-
 }

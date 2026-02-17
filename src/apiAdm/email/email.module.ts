@@ -15,6 +15,7 @@ import emailConfig from './config/email.config';
       provide: EmailClient,
       useClass: HttpEmailClient,
     }
-  ]
+  ],
+  exports: [EmailService]
 })
 export class EmailModule {}

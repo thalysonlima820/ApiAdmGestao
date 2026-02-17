@@ -1,4 +1,4 @@
-@url = http://localhost:3000
+@url = http://localhost:3333
 @token = {{authenticate.response.body.accessToken}}
 
 #Auth
@@ -40,11 +40,3 @@ Content-Type: application/json
   "ACTIVE": 1
 }
 ###
-
-# TELEGRAM
-###
-GET {{url}}/telegram
-
-# EMAIL
-###
-GET {{url}}/email
