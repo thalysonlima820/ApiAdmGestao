@@ -1,0 +1,17 @@
+@url = http://localhost:3333
+@token = {{authenticate.response.body.accessToken}}
+
+#Auth
+### authenticate
+# @name authenticate
+POST {{url}}/auth/login
+Content-Type: application/json
+
+{
+  "NOME": "pcadmin",
+  "SENHA": "5500"
+}
+###
+
+GET {{url}}/precificacao/16-FEB-2026
+admgestao: {{token}}

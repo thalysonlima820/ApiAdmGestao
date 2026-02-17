@@ -19,6 +19,10 @@ export class AppController {
   getLogUsuario() {
     return this.appService.getLogUser();
   }
+  @Get('log/precificacao')
+  getLogPrecificacao() {
+    return this.appService.getLogPrecificacao();
+  }
   @Get('log/telegram')
   getLogTelegram() {
     return this.appService.getLogTelegram();

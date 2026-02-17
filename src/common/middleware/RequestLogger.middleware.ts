@@ -31,6 +31,7 @@ export class RequestLoggerMiddleware implements NestMiddleware {
         req.originalUrl === '/email' ||
         req.originalUrl === '/telegram' ||
         req.originalUrl === '/log/usuario' ||
+        req.originalUrl === '/log/precificacao' ||
         req.originalUrl === '/log/telegram' 
       )
         return;

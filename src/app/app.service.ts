@@ -217,4 +217,26 @@ export class AppService {
 
     return { dados: logsHoje };
   }
+
+  async getLogPrecificacao() {
+    const dados = this.readAllLogs();
+    const hoje = this.hojeBR();
+
+    const logsUsuarioHoje = dados
+      .filter((l) => {
+        const date = String(l?.date ?? '');
+        if (date !== hoje) return false;
+        const url = String(l?.url ?? l?.route ?? '')
+          .trim()
+          .toLowerCase();
+        const isUsuario = url.startsWith('/precificacao');
+        const isLogUsuario = url.startsWith('/log/precificacao');
+        return isUsuario && !isLogUsuario;
+      })
+      .sort((a, b) =>
+        String(a?.hora ?? '').localeCompare(String(b?.hora ?? '')),
+      );
+
+    return { dados: logsUsuarioHoje };
+  }
 }
