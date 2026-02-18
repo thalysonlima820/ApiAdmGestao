@@ -4,6 +4,7 @@ export enum RoutePolicy {
   upsertUsuario = 'upsertUsuario',
   // Precificação
   getPrecificacao = 'getPrecificacao',
+  upsertPrecificacao = 'upsertPrecificacao',
   // Limite
   getLimite = 'getLimite',
   // Venda Perdida

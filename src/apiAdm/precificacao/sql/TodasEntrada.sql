@@ -30,7 +30,7 @@ WITH CTE AS (
         JOIN PCMARCA MAR ON P.CODMARCA = MAR.CODMARCA
         JOIN PCSECAO CS ON P.CODSEC = CS.CODSEC
     WHERE
-        PDO.DTFATUR > TO_DATE('01-JAN-2024', 'DD-MM-YYYY')
+        PDO.DTFATUR > TO_DATE('01-JAN-2025', 'DD-MM-YYYY')
         AND B.EMBALAGEM IN ('UN', 'KG')
 ),
 ULTIMA_ENTRADA AS (
@@ -61,7 +61,7 @@ ULTIMA_ENTRADA AS (
         PCPEDIDO P
     WHERE
         M.NUMPED = P.NUMPED
-        AND M.DTMOV > TO_DATE('01-JAN-2023', 'DD-MM-YYYY')
+        AND M.DTMOV > TO_DATE('01-JAN-2025', 'DD-MM-YYYY')
         AND M.CODOPER IN ('E', 'EB')
         AND P.TIPOBONIFIC IN ('N', 'B')
 ),
@@ -88,7 +88,7 @@ PVT AS (
         AND P.CLASSEVENDA = SM.CURVA -- Relaciona markup com classe de venda e seção
     WHERE
         M.CODOPER = 'E' -- Somente entradas
-        AND M.DTMOV > TO_DATE('01-JAN-2023', 'DD-MM-YYYY')
+        AND M.DTMOV > TO_DATE('01-JAN-2025', 'DD-MM-YYYY')
 ),
 IMPOSTO AS (
     SELECT

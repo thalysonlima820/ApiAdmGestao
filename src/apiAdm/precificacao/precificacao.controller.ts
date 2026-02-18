@@ -48,7 +48,9 @@ export class PrecificacaoController {
   }
 
   @Post()
-  UpdatePreco(@Body() dados: UpdatePrecoDto){
-    return this.precificacaoService.UpdatePreco(dados)
+  @UseGuards(AuthTokenGuard, RoutePolicyGuard)
+  @SetRoutePolicy(RoutePolicy.upsertPrecificacao)
+  UpdatePreco(@Body() dados: UpdatePrecoDto) {
+    return this.precificacaoService.UpdatePreco(dados);
   }
 }

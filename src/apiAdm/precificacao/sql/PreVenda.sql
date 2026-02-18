@@ -85,7 +85,7 @@ PVT AS (
         AND P.CLASSEVENDA = SM.CURVA -- Relaciona markup com classe de venda e seção
     WHERE
         M.CODOPER = 'E' -- Somente entradas
-        AND M.DTMOV > TO_DATE('01-JAN-2023', 'DD-MM-YYYY')
+        AND M.DTMOV > TO_DATE('01-JAN-2025', 'DD-MM-YYYY')
 ),
 ULTIMA_ENTRADA AS (
     SELECT
