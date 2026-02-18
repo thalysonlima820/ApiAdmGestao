@@ -13,4 +13,5 @@ export class EmailService {
   ): Promise<void> {
     return this.emailClient.sendEmail({ to, subject, html, text });
   }
+  
 }

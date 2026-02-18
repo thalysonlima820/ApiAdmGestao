@@ -39,7 +39,7 @@ export class UsuarioController {
 
   @Post()
   @UseGuards(AuthTokenGuard, RoutePolicyGuard)
-   @SetRoutePolicy(RoutePolicy.upsertUsuario)
+  @SetRoutePolicy(RoutePolicy.upsertUsuario)
   create(@Body() createUsuarioDto: CreateUsuarioDto) {
     return this.usuarioService.create(createUsuarioDto);
   }

@@ -2,18 +2,18 @@ import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import * as oracledb from 'oracledb';
 import { ConfigService } from '@nestjs/config';
 import * as path from 'path';
-import { AppError } from '../filters/exceptions/app-exceptions';
 
 @Injectable()
 export class OracleService implements OnModuleInit, OnModuleDestroy {
+  private pool!: oracledb.Pool;
+
   constructor(private readonly config: ConfigService) {}
 
   async onModuleInit() {
     const libDir = path.join(process.cwd(), 'DB', 'instantclient_23_3');
-
     oracledb.initOracleClient({ libDir });
 
-    await oracledb.createPool({
+    this.pool = await oracledb.createPool({
       user: this.config.get('app.oracle.user'),
       password: this.config.get('app.oracle.password'),
       connectString: `(DESCRIPTION=
@@ -26,28 +26,34 @@ export class OracleService implements OnModuleInit, OnModuleDestroy {
     });
   }
 
-  async query<T = any>(
-    sql: string,
-    binds: Record<string, any> = {},
-  ): Promise<T[]> {
-    const conn = await oracledb.getConnection();
+  async query<T = any>(sql: string, binds: Record<string, any> = {}): Promise<T[]> {
+    let conn: any;
+
     try {
+      conn = await this.pool.getConnection();
+      await conn.execute(
+        `BEGIN DBMS_APPLICATION_INFO.SET_MODULE(:m, :a); END;`,
+        { m: 'API_ADM', a: 'PRECIF' },
+      );
+
       const result = await conn.execute(sql, binds, {
         outFormat: oracledb.OUT_FORMAT_OBJECT,
         autoCommit: true,
       });
+
       return (result.rows ?? []) as T[];
-    } catch (erro: unknown)   {
-      await conn.close();
-      const msg = erro instanceof Error ? erro.message : String(erro);
-      AppError.ServerErro({message: msg, error: 'Conexão com Servidor', messageType: 'alerta', telegram: true})
-      return ([])
     } finally {
-      await conn.close();
+      if (conn) {
+        try {
+          await conn.close();
+        } catch {
+          //
+        }
+      }
     }
   }
 
   async onModuleDestroy() {
-    await oracledb.getPool().close(10);
+    if (this.pool) await this.pool.close(10);
   }
 }

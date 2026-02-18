@@ -13,5 +13,22 @@ Content-Type: application/json
 }
 ###
 
-GET {{url}}/precificacao/16-FEB-2026
+###
+GET {{url}}/precificacao/18-FEB-2026
 admgestao: {{token}}
+###
+GET {{url}}/precificacao/todas/18-FEB-2026
+admgestao: {{token}}
+###
+GET {{url}}/precificacao/prevenda/16-FEB-2026
+admgestao: {{token}}
+
+###
+POST {{url}}/precificacao
+admgestao: {{token}}
+Content-Type: application/json
+
+{
+  "COD_PRODUTO": 1,
+  "PRECOMINSUG": 12.56
+}

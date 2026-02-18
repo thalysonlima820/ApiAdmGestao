@@ -23,18 +23,19 @@ export class RequestLoggerMiddleware implements NestMiddleware {
       codusuario = decoded?.sub ?? null;
     }
 
-    next();
-
     res.on('finish', () => {
+      const cache = String(res.getHeader('x-cache') ?? '');
+      if (cache === 'HIT') return;
       if (
         req.originalUrl === '/log' ||
         req.originalUrl === '/email' ||
         req.originalUrl === '/telegram' ||
         req.originalUrl === '/log/usuario' ||
         req.originalUrl === '/log/precificacao' ||
-        req.originalUrl === '/log/telegram' 
-      )
+        req.originalUrl === '/log/telegram'
+      ) {
         return;
+      }
 
       const tempoSegundos = Number(((Date.now() - start) / 1000).toFixed(2));
 
@@ -57,6 +58,7 @@ export class RequestLoggerMiddleware implements NestMiddleware {
 
       this.writeLog(log);
     });
+    next();
   }
 
   private writeLog(log: any) {
