@@ -20,9 +20,11 @@ import { MyExceptionFilter } from 'src/common/filters/my-exception.filter';
 
 import { CryptoModule } from 'src/crypto/crypto.module';
 import { envValidationSchema } from 'src/config/env.validation';
+import { SchedulerModule } from 'src/scheduler/scheduler.module';
 
 @Module({
   imports: [
+    SchedulerModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [appConfig],

@@ -124,3 +124,4 @@ Todos os envios (sucesso ou erro) são registrados em:
 - Manter histórico estruturado de logs
 
 
+npm i @nestjs/schedule

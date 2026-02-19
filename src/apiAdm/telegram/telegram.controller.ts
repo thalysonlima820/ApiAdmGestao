@@ -3,7 +3,7 @@ import { TelegramService } from './telegram.service';
 import { TELEGRAM_IDS_MONITORAMENTO_SERVIDOR } from 'src/apiAdm/telegram/constants/Telegram.constants';
 import { mensagemTeste } from './templates/mensagens.ts';
 
-@Controller('telegram')
+@Controller('telegram/service')
 export class TelegramController {
   constructor(private readonly telegramService: TelegramService) {}
 

@@ -2,8 +2,12 @@
 
 # TELEGRAM
 ###
-GET {{url}}/telegram
+GET {{url}}/telegram/service
+###
+GET {{url}}/telegram/teste
 
 # EMAIL
 ###
-GET {{url}}/email
+GET {{url}}/email/service
+###
+GET {{url}}/email/relatorio/venda

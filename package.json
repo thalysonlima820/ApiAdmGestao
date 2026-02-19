@@ -1,6 +1,6 @@
 {
   "name": "api-adm-gestao",
-  "version": "1.9.15",
+  "version": "1.11.18",
   "description": "",
   "author": "",
   "private": true,
@@ -27,6 +27,7 @@
     "@nestjs/jwt": "^11.0.2",
     "@nestjs/mapped-types": "^2.1.0",
     "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/schedule": "^6.1.1",
     "@nestjs/typeorm": "^11.0.0",
     "bcryptjs": "^3.0.3",
     "class-transformer": "^0.5.1",
