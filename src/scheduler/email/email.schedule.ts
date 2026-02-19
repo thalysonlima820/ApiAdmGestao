@@ -10,7 +10,7 @@ export class EmailSchedule {
 
   @Cron('0 6 * * *', { timeZone: 'America/Santarem' })
   async enviarEmailDiario() {
-    this.logger.log('📧 Iniciando envio de email diário (06:00)');
+    this.logger.log('📧 Iniciando envio de email Relatorio Venda e Balancete (06:00)');
 
     try {
       await this.relatorio.enviarRelatorioGerencial();
