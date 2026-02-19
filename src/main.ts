@@ -5,6 +5,10 @@ import { AppModule } from './app/app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  app.getHttpAdapter().getInstance().set('trust proxy', 1);
+
+  app.setGlobalPrefix('adm');
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -20,7 +24,7 @@ async function bootstrap() {
     optionsSuccessStatus: 204,
   });
 
-  await app.listen(Number(process.env.APP_PORT ?? 3000), '0.0.0.0');
+  await app.listen(Number(process.env.APP_PORT ?? 3333), '0.0.0.0');
 }
 
 bootstrap();

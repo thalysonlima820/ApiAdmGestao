@@ -159,7 +159,7 @@ export class AppService {
         const url = String(l?.url ?? l?.route ?? '')
           .trim()
           .toLowerCase();
-        const isUsuario = url.startsWith('/usuario');
+        const isUsuario = url.startsWith('/adm/usuario');
         const isLogUsuario = url.startsWith('/log/usuario');
         return isUsuario && !isLogUsuario;
       })
@@ -229,7 +229,7 @@ export class AppService {
         const url = String(l?.url ?? l?.route ?? '')
           .trim()
           .toLowerCase();
-        const isUsuario = url.startsWith('/precificacao');
+        const isUsuario = url.startsWith('/adm/precificacao');
         const isLogUsuario = url.startsWith('/log/precificacao');
         return isUsuario && !isLogUsuario;
       })

@@ -1,4 +1,4 @@
-@url = http://localhost:3333
+@url = http://localhost:3333/adm
 
 ###
-GET {{url}}/teste
+GET {{url}}/
