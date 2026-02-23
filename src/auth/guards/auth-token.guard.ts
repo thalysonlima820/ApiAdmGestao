@@ -60,6 +60,7 @@ export class AuthTokenGuard implements CanActivate {
       return true;
     } catch {
       AppError.badRequest({
+        code: '401',
         message: 'Token invalido Refaça seu Login',
         messageType: 'aviso',
       });

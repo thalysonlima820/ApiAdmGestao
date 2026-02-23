@@ -29,6 +29,7 @@ import { SchedulerModule } from 'src/scheduler/scheduler.module';
       isGlobal: true,
       load: [appConfig],
       validationSchema: envValidationSchema,
+      envFilePath: ['.env', '.env.email']
     }),
     CryptoModule,
     DatabaseModule,

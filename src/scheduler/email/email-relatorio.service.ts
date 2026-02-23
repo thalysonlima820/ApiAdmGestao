@@ -612,7 +612,10 @@ export class EmailRelatorioService {
     const venda = await this.oracle.query<any>(sqlVenda);
     const balancete = await this.oracle.query<any>(sqlBalancete);
 
-    const to = ['thalysonlima820@gmail.com', 'adm@grupobiasi.com', 'lbiasi1994@gmail.com'];
+    const to = process.env.EMAIL_VENDA_BALANCETE
+      ?.split(',')
+      .map(e => e.trim())
+      .filter(Boolean) ?? []
 
     const hoje = new Date().toLocaleDateString('pt-BR', {
       day: '2-digit',
