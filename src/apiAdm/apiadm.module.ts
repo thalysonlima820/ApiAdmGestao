@@ -4,6 +4,7 @@ import { TelegramModule } from './telegram/telegram.module';
 import { EmailModule } from './email/email.module';
 import { PrecificacaoModule } from './precificacao/precificacao.module';
 import { LimiteModule } from './limite/limite.module';
+import { EntradaSaidaModule } from './entrada-saida/entrada-saida.module';
 
 
 @Module({
@@ -13,6 +14,7 @@ import { LimiteModule } from './limite/limite.module';
     EmailModule,
     PrecificacaoModule,
     LimiteModule,
+    EntradaSaidaModule
   ],
   exports: [TelegramModule, EmailModule],
 })

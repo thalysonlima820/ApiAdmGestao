@@ -23,6 +23,10 @@ export class AppController {
   getLogPrecificacao() {
     return this.appService.getLogPrecificacao();
   }
+  @Get('log/limite')
+  getLogLimite() {
+    return this.appService.getLogLimite();
+  }
   @Get('log/telegram')
   getLogTelegram() {
     return this.appService.getLogTelegram();

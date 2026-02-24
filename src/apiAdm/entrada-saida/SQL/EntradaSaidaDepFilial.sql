@@ -1,0 +1,269 @@
+WITH ENTRADA AS (
+    SELECT
+        M.CODFILIAL,
+        PC.CODEPTO,
+        SUM(M.QT) AS TOTAL_QT_ENTRADA,
+        SUM(M.QT * M.PUNIT) AS VALOR_TOTAL_ENTRADA
+    FROM
+        PCMOV M,
+        PCPEDIDO P,
+        PCPRODUT PC
+    WHERE
+        (
+            M.CODOPER = 'E'
+            OR (
+                :condiferartransferencia = 'S'
+                AND M.CODOPER = 'ET'
+            )
+        )
+        AND M.CODPROD = PC.CODPROD
+        AND M.NUMPED = P.NUMPED
+        AND P.TIPOBONIFIC = 'N'
+        AND M.DTMOV BETWEEN TO_DATE(
+            :datainicio,
+            'DD-MON-YYYY',
+            'NLS_DATE_LANGUAGE=ENGLISH'
+        )
+        AND TO_DATE(
+            :datafim,
+            'DD-MON-YYYY',
+            'NLS_DATE_LANGUAGE=ENGLISH'
+        )
+        AND M.CODFILIAL = :filial
+    GROUP BY
+        M.CODFILIAL,
+        PC.CODEPTO
+),
+SAIDA AS (
+    SELECT
+        M.CODFILIAL,
+        PC.CODEPTO,
+        SUM(M.QT) AS TOTAL_QT_SAIDA,
+        SUM(M.QT * M.PUNIT) AS VALOR_TOTAL_SAIDA,
+        SUM(M.QT * M.CUSTOFIN) AS CUSTO_TOTAL
+    FROM
+        PCMOV M,
+        PCPRODUT PC
+    WHERE
+        (
+            M.CODOPER = 'S'
+            OR (
+                :condiferartransferencia = 'S'
+                AND M.CODOPER = 'ST'
+            )
+        )
+        AND M.CODPROD = PC.CODPROD
+        AND M.DTMOV BETWEEN TO_DATE(
+            :datainicio,
+            'DD-MON-YYYY',
+            'NLS_DATE_LANGUAGE=ENGLISH'
+        )
+        AND TO_DATE(
+            :datafim,
+            'DD-MON-YYYY',
+            'NLS_DATE_LANGUAGE=ENGLISH'
+        )
+        AND M.CODFILIAL = :filial
+    GROUP BY
+        M.CODFILIAL,
+        PC.CODEPTO
+),
+PRODUTO AS (
+    SELECT
+        DISTINCT P.CODEPTO,
+        D.DESCRICAO AS DEPARTAMENTO
+    FROM
+        PCPRODUT P
+        JOIN PCDEPTO D ON P.CODEPTO = D.CODEPTO
+),
+avaria AS (
+    SELECT
+        PA.CODFILIAL,
+        D.CODEPTO,
+        SUM(PA.QTORIGINAL * E.VALORULTENT) AS VL_AVARIA
+    FROM
+        PCPRODAVARIA PA,
+        PCPRODUT P,
+        PCDEPTO D,
+        PCEST E
+    WHERE
+        PA.CODPROD = P.CODPROD
+        AND P.CODEPTO = D.CODEPTO
+        AND P.CODPROD = E.CODPROD
+        and PA.CODFILIAL = E.CODFILIAL
+        AND PA.DATA BETWEEN TO_DATE(
+            :datainicio,
+            'DD-MON-YYYY',
+            'NLS_DATE_LANGUAGE=ENGLISH'
+        )
+        AND TO_DATE(
+            :datafim,
+            'DD-MON-YYYY',
+            'NLS_DATE_LANGUAGE=ENGLISH'
+        )
+        AND PA.CODFILIAL = :filial
+    GROUP by
+        PA.CODFILIAL,
+        D.CODEPTO
+),
+USO_CONSUMO AS (
+    SELECT
+        R.CODFILIAL,
+        D.CODEPTO,
+        D.DESCRICAO AS DEPARTAMENTO,
+        SUM(P.QT) AS QT_USO_CONSUMO,
+        ROUND(SUM(P.QT * B.VALORULTENT), 2) AS VL_USO_CONSUMO
+    FROM
+        PCPREREQMATCONSUMOI P,
+        PCPREREQMATCONSUMOC R,
+        PCPRODUT P2,
+        PCDEPTO D,
+        PCSECAO S,
+        PCCATEGORIA C,
+        PCEMPR F,
+        PCEST B
+    WHERE
+        P.NUMPREREQUISICAO = R.NUMPREREQUISICAO
+        AND R.CODFUNCREQ = F.MATRICULA
+        AND P.CODPROD = B.CODPROD
+        AND R.CODFILIAL = B.CODFILIAL
+        AND P.CODPROD = P2.CODPROD
+        AND P2.CODEPTO = D.CODEPTO
+        AND P2.CODSEC = S.CODSEC
+        AND P2.CODCATEGORIA = C.CODCATEGORIA
+        AND S.CODSEC = C.CODSEC
+        AND P.NUMPREREQUISICAO IN (
+            SELECT
+                R.NUMPREREQUISICAO
+            FROM
+                PCPREREQMATCONSUMOC R
+            WHERE
+                R.DATA BETWEEN TO_DATE(
+                    :datainicio,
+                    'DD-MON-YYYY',
+                    'NLS_DATE_LANGUAGE=ENGLISH'
+                )
+                AND TO_DATE(
+                    :datafim,
+                    'DD-MON-YYYY',
+                    'NLS_DATE_LANGUAGE=ENGLISH'
+                )
+        )
+        AND R.CODFILIAL = :filial
+    GROUP BY
+        R.CODFILIAL,
+        D.CODEPTO,
+        D.DESCRICAO
+),
+SAIDA_DEVOLUCAO AS (
+    SELECT
+        M.CODFILIAL,
+        PC.CODEPTO,
+        SUM(M.QT) AS TOTAL_QT_DELV,
+        SUM(M.QT * M.PUNIT) AS VALOR_TOTAL_DEVL
+    FROM
+        PCMOV M,
+        PCPRODUT PC
+    WHERE
+        M.CODOPER = 'SD'
+        AND M.CODPROD = PC.CODPROD
+        AND M.DTMOV BETWEEN TO_DATE(
+            :datainicio,
+            'DD-MON-YYYY',
+            'NLS_DATE_LANGUAGE=ENGLISH'
+        )
+        AND TO_DATE(
+            :datafim,
+            'DD-MON-YYYY',
+            'NLS_DATE_LANGUAGE=ENGLISH'
+        )
+        AND M.CODFILIAL = :filial
+    GROUP BY
+        M.CODFILIAL,
+        PC.CODEPTO
+)
+SELECT
+    E.CODFILIAL,
+    P.CODEPTO,
+    P.DEPARTAMENTO,
+    ROUND(DD.VL_USO_CONSUMO, 2) AS VL_USO_CONSUMO,
+    ROUND(
+        CASE
+            WHEN SD.VALOR_TOTAL_DEVL IS NULL
+            AND DD.VL_USO_CONSUMO IS NULL THEN E.VALOR_TOTAL_ENTRADA
+            WHEN SD.VALOR_TOTAL_DEVL IS NULL THEN (E.VALOR_TOTAL_ENTRADA - DD.VL_USO_CONSUMO)
+            WHEN DD.VL_USO_CONSUMO IS NULL THEN (E.VALOR_TOTAL_ENTRADA - SD.VALOR_TOTAL_DEVL)
+            ELSE (
+                E.VALOR_TOTAL_ENTRADA - SD.VALOR_TOTAL_DEVL - DD.VL_USO_CONSUMO
+            )
+        END,
+        2
+    ) AS VALOR_TOTAL_ENTRADA,
+    ROUND(SD.VALOR_TOTAL_DEVL, 2) as VALOR_DEVLUCAO,
+    CASE
+        WHEN P.DEPARTAMENTO = 'ACOUGUE' THEN 25
+        WHEN P.DEPARTAMENTO = 'BAZAR' THEN 30
+        WHEN P.DEPARTAMENTO = 'BEBIDAS' THEN 20
+        WHEN P.DEPARTAMENTO = 'HORTIFRUTI' THEN 31
+        WHEN P.DEPARTAMENTO = 'LIMPEZA' THEN 20
+        WHEN P.DEPARTAMENTO = 'MATINAIS' THEN 17
+        WHEN P.DEPARTAMENTO = 'MERCEARIA DE ALTO GIRO' THEN 18
+        WHEN P.DEPARTAMENTO = 'MERCEARIA DOCE' THEN 25
+        WHEN P.DEPARTAMENTO = 'PADARIA' THEN 50
+        WHEN P.DEPARTAMENTO = 'PERECIVEIS CONG/RESF' THEN 23
+        WHEN P.DEPARTAMENTO = 'PERECIVEIS LACTEOS' THEN 25
+        WHEN P.DEPARTAMENTO = 'PERFUMARIA' THEN 25
+        WHEN P.DEPARTAMENTO = 'PET SHOP' THEN 26
+        ELSE 0
+    END AS MARGEM_IDEAL,
+    CASE
+        WHEN P.DEPARTAMENTO = 'ACOUGUE' THEN 13
+        WHEN P.DEPARTAMENTO = 'BAZAR' THEN 1.5
+        WHEN P.DEPARTAMENTO = 'BEBIDAS' THEN 4.5
+        WHEN P.DEPARTAMENTO = 'HORTIFRUTI' THEN 15
+        WHEN P.DEPARTAMENTO = 'LIMPEZA' THEN 7
+        WHEN P.DEPARTAMENTO = 'MATINAIS' THEN 10
+        WHEN P.DEPARTAMENTO = 'MERCEARIA DE ALTO GIRO' THEN 18
+        WHEN P.DEPARTAMENTO = 'MERCEARIA DOCE' THEN 5
+        WHEN P.DEPARTAMENTO = 'PADARIA' THEN 2.5
+        WHEN P.DEPARTAMENTO = 'PERECIVEIS CONG/RESF' THEN 12
+        WHEN P.DEPARTAMENTO = 'PERECIVEIS LACTEOS' THEN 4
+        WHEN P.DEPARTAMENTO = 'PERFUMARIA' THEN 7
+        WHEN P.DEPARTAMENTO = 'PET SHOP' THEN 0.5
+        ELSE 0
+    END AS PARTICIPACAO_ESPERADA,
+    ROUND(S.VALOR_TOTAL_SAIDA, 2) AS VALOR_TOTAL_SAIDA,
+    ROUND(a.VL_AVARIA, 2) AS VL_AVARIA,
+    ROUND(S.CUSTO_TOTAL, 2) AS CUSTO_TOTAL,
+    ROUND(
+        (
+            (
+                (
+                    S.VALOR_TOTAL_SAIDA - (
+                        E.VALOR_TOTAL_ENTRADA - NVL(SD.VALOR_TOTAL_DEVL, 0) - NVL(DD.VL_USO_CONSUMO, 0)
+                    )
+                ) / S.VALOR_TOTAL_SAIDA
+            ) * 100
+        ),
+        2
+    ) AS MARGEM,
+    CASE
+        WHEN E.VALOR_TOTAL_ENTRADA > S.VALOR_TOTAL_SAIDA THEN 'PREJUIZO POTENCIAL'
+        ELSE 'LUCRO POTENCIAL'
+    END AS RELATORIO_VALOR
+FROM
+    SAIDA S
+    LEFT JOIN ENTRADA E ON S.CODEPTO = E.CODEPTO
+    AND S.CODFILIAL = E.CODFILIAL
+    JOIN PRODUTO P ON S.CODEPTO = P.CODEPTO
+    LEFT JOIN SAIDA_DEVOLUCAO SD ON SD.CODEPTO = E.CODEPTO
+    AND SD.CODFILIAL = E.CODFILIAL
+    LEFT JOIN USO_CONSUMO DD ON DD.CODEPTO = E.CODEPTO
+    AND DD.CODFILIAL = E.CODFILIAL
+    LEFT JOIN avaria A ON A.CODEPTO = E.CODEPTO
+    AND A.CODFILIAL = E.CODFILIAL
+WHERE
+    P.DEPARTAMENTO != 'USO INTERNO'
+ORDER BY
+    E.CODFILIAL,
+    P.DEPARTAMENTO

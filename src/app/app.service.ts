@@ -239,4 +239,26 @@ export class AppService {
 
     return { dados: logsUsuarioHoje };
   }
+  
+  async getLogLimite() {
+    const dados = this.readAllLogs();
+    const hoje = this.hojeBR();
+
+    const logsUsuarioHoje = dados
+      .filter((l) => {
+        const date = String(l?.date ?? '');
+        if (date !== hoje) return false;
+        const url = String(l?.url ?? l?.route ?? '')
+          .trim()
+          .toLowerCase();
+        const isUsuario = url.startsWith('/adm/limite');
+        const isLogUsuario = url.startsWith('/log/limite');
+        return isUsuario && !isLogUsuario;
+      })
+      .sort((a, b) =>
+        String(a?.hora ?? '').localeCompare(String(b?.hora ?? '')),
+      );
+
+    return { dados: logsUsuarioHoje };
+  }
 }

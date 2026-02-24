@@ -1,0 +1,27 @@
+@url = http://localhost:3333/adm
+@token = {{authenticate.response.body.accessToken}}
+
+#Auth
+### authenticate
+# @name authenticate
+POST {{url}}/auth/login
+Content-Type: application/json
+
+{
+  "NOME": "pcadmin",
+  "SENHA": "5500"
+}
+###
+
+###
+GET {{url}}/entradasaida/01-FEB-2026/28-FEB-2026/s/TODOS
+admgestao: {{token}}
+###
+GET {{url}}/entradasaida/01-FEB-2026/28-FEB-2026/s/TODOS/17 
+admgestao: {{token}}
+###
+GET {{url}}/entradasaida/01-FEB-2026/28-FEB-2026/s/TODOS/17/19
+admgestao: {{token}}
+###
+GET {{url}}/entradasaida/01-FEB-2026/28-FEB-2026/s/TODOS/17/19/1050
+admgestao: {{token}}
