@@ -16,3 +16,6 @@ Content-Type: application/json
 ###
 GET {{url}}/limite/01-FEB-2026/28-FEB-2026
 admgestao: {{token}}
+###
+GET {{url}}/limite/01-FEB-2026/28-FEB-2026/16/todos
+admgestao: {{token}}

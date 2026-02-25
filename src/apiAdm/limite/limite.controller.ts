@@ -22,4 +22,18 @@ export class LimiteController {
   ) {
     return this.limiteService.GetLimite(dataInicio, dataFim);
   }
+  
+  @Get(':dataInicio/:dataFim/:codcomprador/:codfilial')
+  @UseGuards(AuthTokenGuard, RoutePolicyGuard)
+  @SetRoutePolicy(RoutePolicy.getLimite)
+  @UseInterceptors(ChangeDataInterceptor)
+  GetLimiteNEntregue(
+    @Param('dataInicio') dataInicio: string,
+    @Param('dataFim') dataFim: string,
+    @Param('codcomprador') codcomprador: number,
+    @Param('codfilial') codfilial: string,
+  ) {
+    return this.limiteService.GetLimiteNEntregue(dataInicio, dataFim, codcomprador, codfilial);
+  }
+
 }

@@ -125,3 +125,7 @@ Todos os envios (sucesso ou erro) são registrados em:
 
 
 npm i @nestjs/schedule
+
+
+ git fetch origin
+ git reset --hard origin/main

@@ -19,6 +19,39 @@ export class LimiteService {
     const sql = fs.readFileSync(sqlPath, 'utf-8');
     const row = await this.oracle.query(sql, { DataInicio, DataFim });
 
-    return row
+    return row;
   }
+
+  async GetLimiteNEntregue(
+    dataInicio: string,
+    dataFim: string,
+    codcomprador: number,
+    codfilial: string,
+  ) {
+    const sqlPath = path.join(
+      process.cwd(),
+      'src',
+      'apiAdm',
+      'limite',
+      'sql',
+      'GetLimiteNEntregue.sql',
+    );
+    if (codfilial.toUpperCase() === 'TODOS') {
+      const sql = fs.readFileSync(sqlPath, 'utf-8');
+      const row = await this.oracle.query(sql, {
+        dataInicio,
+        dataFim,
+        codcomprador,
+      });
+      return row;
+    }
+    const sql = fs.readFileSync(sqlPath, 'utf-8');
+    const row = await this.oracle.query(sql, {
+      dataInicio,
+      dataFim,
+      codcomprador,
+    });
+    return row.filter((i) => i.CODFILIAL === codfilial)
+  }
+  
 }
