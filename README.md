@@ -9,6 +9,17 @@ API backend construída com **NestJS**, utilizando **TypeORM**, **Oracle** e **P
 
 ---
 
+## Atualizar projeto (forçar sincronização com o repositório)
+
+Caso queira atualizar o projeto local exatamente igual ao repositório remoto (`main`), utilize os comandos abaixo:
+
+```bash
+git fetch origin
+git reset --hard origin/main
+```
+
+---
+
 ### gerar chave   RESPONSE_ENC_KEY_BASE64
 node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 
@@ -26,6 +37,7 @@ node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 
 ```bash
 brew install --cask oracle-instantclient
+npm i @nestjs/schedule
 ```
 
 Se precisar finalizar processos Node travados:
@@ -123,9 +135,3 @@ Todos os envios (sucesso ou erro) são registrados em:
 - Centralizar notificações (Telegram / Email)
 - Manter histórico estruturado de logs
 
-
-npm i @nestjs/schedule
-
-
- git fetch origin
- git reset --hard origin/main

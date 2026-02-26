@@ -5,6 +5,7 @@ import { EmailModule } from './email/email.module';
 import { PrecificacaoModule } from './precificacao/precificacao.module';
 import { LimiteModule } from './limite/limite.module';
 import { EntradaSaidaModule } from './entrada-saida/entrada-saida.module';
+import { TributacaoModule } from './tributacao/tributacao.module';
 
 
 @Module({
@@ -14,7 +15,8 @@ import { EntradaSaidaModule } from './entrada-saida/entrada-saida.module';
     EmailModule,
     PrecificacaoModule,
     LimiteModule,
-    EntradaSaidaModule
+    EntradaSaidaModule,
+    TributacaoModule,
   ],
   exports: [TelegramModule, EmailModule],
 })
