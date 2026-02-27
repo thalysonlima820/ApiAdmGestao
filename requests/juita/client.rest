@@ -1,0 +1,48 @@
+@url = http://localhost:3333/adm/juita
+@token = {{authenticate.response.body.accessToken}}
+
+#Auth
+### authenticate
+# @name authenticate
+POST {{url}}/auth/login
+Content-Type: application/json
+
+{
+  "EMAIL": "thalysonlima820@gmail.com",
+  "SENHA": "#ThaPoke12#"
+}
+###
+
+# USUARIOS
+###
+GET {{url}}/usuario
+admgestao: {{token}}
+###
+GET {{url}}/usuario/1
+admgestao: {{token}}
+###
+POST {{url}}/usuario
+Content-Type: application/json
+
+{
+  "NOME": "THALYSON",
+  "EMAIL": "thalysonlima820@gmail.com",
+  "CPF": "04939027244",
+  "SENHA": "#ThaPoke12#",
+  "ROUTEPOLICIES": ["AdminJuita"],
+  "ATIVO": 1
+}
+###
+PATCH {{url}}/usuario/1
+admgestao: {{token}}
+Content-Type: application/json
+
+{
+  "NOME": "THALYSON",
+  "EMAIL": "thalysonlima820@gmail.com",
+  "CPF": "04939027244",
+  "SENHA": "#ThaPoke12#",
+  "ROUTEPOLICIES": ["AdminJuita"],
+  "ATIVO": 1
+}
+###

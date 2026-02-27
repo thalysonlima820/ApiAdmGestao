@@ -21,6 +21,7 @@ import { MyExceptionFilter } from 'src/common/filters/my-exception.filter';
 import { CryptoModule } from 'src/crypto/crypto.module';
 import { envValidationSchema } from 'src/config/env.validation';
 import { SchedulerModule } from 'src/scheduler/scheduler.module';
+import { JuitaModule } from 'src/juita/Juita.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { SchedulerModule } from 'src/scheduler/scheduler.module';
     DatabaseModule,
     AuthModule,
     ApiAdmModule,
+    JuitaModule,
   ],
   controllers: [AppController],
   providers: [
