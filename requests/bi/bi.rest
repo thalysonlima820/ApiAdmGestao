@@ -2,3 +2,5 @@
 
 ###
 GET {{url}}/bi
+###
+GET {{url}}/bi/01-FEB-2026/28-FEB-2026
