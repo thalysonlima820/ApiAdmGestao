@@ -53,7 +53,6 @@ export class PrecificacaoService {
 
     return rows;
   }
-
   async UpdatePreco(dados: UpdatePrecoDto) {
     await this.oracle.query(
       `UPDATE PCEMBALAGEM B 
@@ -85,7 +84,23 @@ export class PrecificacaoService {
     );
 
     return {
-      menssage: `Sucesso Produto ${dados.COD_PRODUTO} Alterado`
-    }
+      menssage: `Sucesso Produto ${dados.COD_PRODUTO} Alterado`,
+    };
+  }
+
+  async PesquisaProduto(codprod: string) {
+    const sqlPath = path.join(
+      process.cwd(),
+      'src',
+      'apiAdm',
+      'precificacao',
+      'sql',
+      'Produto.sql',
+    );
+    const sql = fs.readFileSync(sqlPath, 'utf-8');
+
+    const rows = await this.oracle.query<any>(sql, { codprod });
+
+    return rows;
   }
 }

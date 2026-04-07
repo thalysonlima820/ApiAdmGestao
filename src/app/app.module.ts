@@ -22,6 +22,7 @@ import { CryptoModule } from 'src/crypto/crypto.module';
 import { envValidationSchema } from 'src/config/env.validation';
 import { SchedulerModule } from 'src/scheduler/scheduler.module';
 import { JuitaModule } from 'src/juita/Juita.module';
+import { BiModule } from 'src/bi/bi.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { JuitaModule } from 'src/juita/Juita.module';
     AuthModule,
     ApiAdmModule,
     JuitaModule,
+    BiModule,
   ],
   controllers: [AppController],
   providers: [

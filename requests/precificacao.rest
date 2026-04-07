@@ -32,3 +32,8 @@ Content-Type: application/json
   "COD_PRODUTO": 1,
   "PRECOMINSUG": 12.56
 }
+
+
+###
+GET {{url}}/precificacao/pesquisa/53541
+admgestao: {{token}}

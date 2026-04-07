@@ -20,6 +20,14 @@ import { UpdatePrecoDto } from './dto/update-preco.dto';
 export class PrecificacaoController {
   constructor(private readonly precificacaoService: PrecificacaoService) {}
 
+  @Get('pesquisa/:codprod')
+  @UseGuards(AuthTokenGuard, RoutePolicyGuard)
+  @SetRoutePolicy(RoutePolicy.getPrecificacao)
+  @UseInterceptors(EncryptResponseInterceptor)
+  PesquisaProduto(@Param('codprod') codprod: string) {
+    return this.precificacaoService.PesquisaProduto(codprod);
+  }
+
   @Get(':data_entrada')
   @UseGuards(AuthTokenGuard, RoutePolicyGuard)
   @SetRoutePolicy(RoutePolicy.getPrecificacao)
