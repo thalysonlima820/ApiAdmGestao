@@ -8,7 +8,7 @@ export class TelegramSchedule {
 
   constructor(private readonly telegramScheduleService: TelegramScheduleService) {}
 
-  @Cron('53 16 * * *', { timeZone: 'America/Santarem' })
+  @Cron('39 14 * * *', { timeZone: 'America/Santarem' })
   async enviarEmailDiario() {
     this.logger.log('📧 Iniciando envio do Telegram diário (06:00)');
 

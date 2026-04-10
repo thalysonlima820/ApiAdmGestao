@@ -23,6 +23,7 @@ import { envValidationSchema } from 'src/config/env.validation';
 import { SchedulerModule } from 'src/scheduler/scheduler.module';
 import { JuitaModule } from 'src/juita/Juita.module';
 import { BiModule } from 'src/bi/bi.module';
+import { BoicasadoModule } from 'src/boicasado/boicasado.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { BiModule } from 'src/bi/bi.module';
     AuthModule,
     ApiAdmModule,
     JuitaModule,
+    BoicasadoModule,
     BiModule,
   ],
   controllers: [AppController],

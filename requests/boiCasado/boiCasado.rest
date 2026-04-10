@@ -1,0 +1,12 @@
+@url = http://localhost:3333/adm
+
+###
+GET {{url}}/boicasado/total/entrada/30-MAR-2026/30-MAR-2026/2
+###
+GET {{url}}/boicasado/total/explosao/30-MAR-2026/02-APR-2026/2
+###
+GET {{url}}/boicasado/peca/explosao/30-MAR-2026/30-MAR-2026/2
+###
+GET {{url}}/boicasado/estoque/explosao/30-MAR-2026/02-APR-2026/2
+###
+GET {{url}}/boicasado/entrada/saida/30-MAR-2026/02-APR-2026/2
