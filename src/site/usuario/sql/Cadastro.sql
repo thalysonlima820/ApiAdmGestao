@@ -1,0 +1,17 @@
+INSERT INTO DEVBR.USUARIO (
+  NOME,
+  EMAIL,
+  SENHA,
+  CPF,
+  TELEFONE,
+  BAIRRO,
+  ATIVO
+) VALUES (
+  :NOME,
+  :EMAIL,
+  '1234',
+  :CPF,
+  :TELEFONE,
+  :BAIRRO,
+  'S'
+)

@@ -75,7 +75,7 @@ export class TelegramScheduleService {
       `  - 🛒 Venda: ${this.formatToBRL(totalVenda)}`,
       `  - 💰 Ticket Médio: ${this.formatToBRL(Number(ticketMedioTotal))}`,
       `  - 📊 Margem: ${margemTotal}%`,
-      `  - 🧾 N° Venda: ${this.formatToBRL(Number(totalNumeroVendas))}`,
+      `  - 🧾 N° Venda: ${totalNumeroVendas.toLocaleString('pt-BR')}`,
       `  - 🎯 Meta: ${metaPorcentagemTotal}%`,
     );
 

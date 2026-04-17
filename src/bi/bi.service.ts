@@ -15,10 +15,12 @@ export class BiService {
       'sql',
       'VendaMesAtual.sql',
     );
+
     const sql = fs.readFileSync(sqlPath, 'utf-8');
     const row = await this.oracle.query(sql);
     return row;
   }
+
   async GetVendaData(datainicio: string, datafim: string) {
     const sqlPath = path.join(
       process.cwd(),
@@ -27,8 +29,9 @@ export class BiService {
       'sql',
       'VendaData.sql',
     );
+
     const sql = fs.readFileSync(sqlPath, 'utf-8');
-    const row = await this.oracle.query(sql, {datainicio, datafim});
+    const row = await this.oracle.query(sql, { datainicio, datafim });
     return row;
   }
 }

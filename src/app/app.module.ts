@@ -24,6 +24,7 @@ import { SchedulerModule } from 'src/scheduler/scheduler.module';
 import { JuitaModule } from 'src/juita/Juita.module';
 import { BiModule } from 'src/bi/bi.module';
 import { BoicasadoModule } from 'src/boicasado/boicasado.module';
+import { SiteModule } from 'src/site/site.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { BoicasadoModule } from 'src/boicasado/boicasado.module';
     DatabaseModule,
     AuthModule,
     ApiAdmModule,
+    SiteModule,
     JuitaModule,
     BoicasadoModule,
     BiModule,

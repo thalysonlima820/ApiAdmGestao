@@ -135,3 +135,8 @@ Todos os envios (sucesso ou erro) são registrados em:
 - Centralizar notificações (Telegram / Email)
 - Manter histórico estruturado de logs
 
+
+https://myaccount.google.com/apppasswords
+
+
+npm install @nestjs/axios axios

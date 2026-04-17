@@ -1,0 +1,21 @@
+@url = http://localhost:3333/adm
+
+###
+POST {{url}}/site/usuario/cadastro
+Content-Type: application/json
+
+{
+  "NOME": "João da Silva",
+  "EMAIL": "joao@email.com",
+  "CPF": "12345678900",
+  "TELEFONE": "91999999999",
+  "BAIRRO": "Centro"
+}
+
+###
+POST http://localhost:3333/adm/site/usuario/login
+Content-Type: application/json
+
+{
+  "CPF": "04939027244"
+}

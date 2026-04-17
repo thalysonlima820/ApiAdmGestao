@@ -19,7 +19,9 @@ async function bootstrap() {
 
   app.enableCors({
     origin: '*',
+    //origin: ['https://serene-otter-a5af1c.netlify.app'],
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    //methods: ['GET'],
     allowedHeaders: ['Content-Type', 'Authorization', 'admgestao'],
     optionsSuccessStatus: 204,
   });

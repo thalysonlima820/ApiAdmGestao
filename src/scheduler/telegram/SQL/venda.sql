@@ -1,82 +1,94 @@
-WITH VENDA AS (
+WITH MOVIMENTOS AS (
     SELECT
         M.CODFILIAL,
-        ROUND(SUM(M.QT * M.CUSTOFIN), 2) AS CUSTO,
-        ROUND(SUM(M.QT * M.PUNIT), 2) AS VENDA,
-        COUNT(DISTINCT M.NUMTRANSVENDA) AS NUMVENDAS,
-        ROUND(SUM(M.QT * M.PUNIT) - SUM(M.QT * M.CUSTOFIN), 2) AS LUCRO,
-        ROUND(
-            SUM(M.QT * M.PUNIT) / COUNT(DISTINCT M.NUMTRANSVENDA), 2) AS TICKET_MEDIO,
-        CASE
-            WHEN SUM(M.QT * M.PUNIT) = 0 THEN 0
-            ELSE ROUND(
-                (
-                    (
-                        (SUM(M.QT * M.PUNIT) - SUM(M.QT * M.CUSTOFIN)) * 100
-                    ) / SUM(M.QT * M.PUNIT)
-                ),2
-            ) END AS MARGEM
-    FROM
-        PCMOV M
-    WHERE
-        M.DTMOV >= TRUNC (SYSDATE, 'MM')
-            AND M.DTMOV < ADD_MONTHS (TRUNC (SYSDATE, 'MM'), 1)
-        AND M.CODOPER IN ('S', 'SB')
+        M.NUMNOTA,
+        SUM(M.QT * M.PUNIT) AS VENDA,
+        SUM(M.QT * M.CUSTOFIN) AS CUSTO
+    FROM PCMOV M
+    WHERE M.DTMOV >= TRUNC(SYSDATE, 'MM')
+      AND M.DTMOV < ADD_MONTHS(TRUNC(SYSDATE, 'MM'), 1)
+      AND M.CODOPER = 'S'
     GROUP BY
-        M.CODFILIAL
-    ORDER BY
-        M.CODFILIAL
+        M.CODFILIAL,
+        M.NUMNOTA
 ),
+
+NOTAS AS (
+    SELECT
+        P.CODFILIAL,
+        P.NUMNOTA
+    FROM PCNFSAID P
+    WHERE P.DTSAIDA >= TRUNC(SYSDATE, 'MM')
+      AND P.DTSAIDA < ADD_MONTHS(TRUNC(SYSDATE, 'MM'), 1)
+      AND P.DTCANCEL IS NULL
+      AND P.CONDVENDA IN (1, 5)
+    GROUP BY
+        P.CODFILIAL,
+        P.NUMNOTA
+),
+
+BASE AS (
+    SELECT
+        M.CODFILIAL,
+        M.NUMNOTA,
+        M.VENDA,
+        M.CUSTO
+    FROM MOVIMENTOS M
+    JOIN NOTAS N
+        ON N.CODFILIAL = M.CODFILIAL
+       AND N.NUMNOTA = M.NUMNOTA
+),
+
+NUMVENDAS AS (
+    SELECT
+        CODFILIAL,
+        COUNT(*) AS NUMVENDAS
+    FROM BASE
+    GROUP BY CODFILIAL
+),
+
+VENDA AS (
+    SELECT
+        B.CODFILIAL,
+        ROUND(SUM(B.CUSTO), 2) AS CUSTO,
+        ROUND(SUM(B.VENDA), 2) AS VENDA,
+        NV.NUMVENDAS,
+        ROUND(SUM(B.VENDA) - SUM(B.CUSTO), 2) AS LUCRO,
+        ROUND(
+            SUM(B.VENDA) / NULLIF(NV.NUMVENDAS, 0),
+            2
+        ) AS TICKET_MEDIO,
+        CASE
+            WHEN SUM(B.VENDA) = 0 THEN 0
+            ELSE ROUND(
+                ((SUM(B.VENDA) - SUM(B.CUSTO)) * 100) / SUM(B.VENDA),
+                2
+            )
+        END AS MARGEM
+    FROM BASE B
+    JOIN NUMVENDAS NV
+        ON NV.CODFILIAL = B.CODFILIAL
+    GROUP BY
+        B.CODFILIAL,
+        NV.NUMVENDAS
+),
+
 META AS (
     SELECT
         PCMETASUP.CODFILIAL,
-        SUM(PCMETASUP.VLVENDAPREV) META
-    FROM
-        PCMETASUP
-    WHERE
-         PCMETASUP.DATA >= TRUNC (SYSDATE, 'MM')
-            AND PCMETASUP.DATA < ADD_MONTHS (TRUNC (SYSDATE, 'MM'), 1)
+        SUM(PCMETASUP.VLVENDAPREV) AS META
+    FROM PCMETASUP
+    WHERE PCMETASUP.DATA >= TRUNC(SYSDATE, 'MM')
+      AND PCMETASUP.DATA < ADD_MONTHS(TRUNC(SYSDATE, 'MM'), 1)
     GROUP BY
         PCMETASUP.CODFILIAL
-    ORDER BY
-        PCMETASUP.CODFILIAL
-),
-AVISTA AS (
-SELECT SUM(VLTOTAL) AVISTA
-        FROM PCPEDCECF
-        WHERE DATA >= TRUNC(SYSDATE) - 1
-           AND DATA < TRUNC(SYSDATE)
-        AND CODCOB IN (
-        'VIDE',
-        'VDEB',
-        'VDSB',
-        'VDEC',
-        'PXVD',
-        'PIXM',
-        'PXPB',
-        'PIX',
-        'SAFR',
-        'MDEB',
-        'MDPB',
-        'MADC',
-        'ELDE',
-        'EDER',
-        'EDPB',
-        'ELOD',
-        'D',
-        'DBVL',
-        'ALEE',
-        'ALEA',
-        'ALPS'
-        )
-
 )
+
 SELECT
     V.*,
-    M.META,
-    ROUND((V.VENDA / NULLIF(M.META, 0)) * 100, 2) AS PERCENTUAL_CARREGADO,
-    VS.AVISTA
-    
-FROM AVISTA VS,
-    VENDA V
-    JOIN META M ON V.CODFILIAL = M.CODFILIAL
+    NVL(M.META, 0) AS META,
+    ROUND((V.VENDA / NULLIF(M.META, 0)) * 100, 2) AS PERCENTUAL_CARREGADO
+FROM VENDA V
+LEFT JOIN META M
+    ON V.CODFILIAL = M.CODFILIAL
+ORDER BY V.CODFILIAL
