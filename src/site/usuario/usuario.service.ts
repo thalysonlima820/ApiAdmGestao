@@ -122,8 +122,9 @@ export class UsuarioService {
     const sqlCheckExistente = fs.readFileSync(sqlCheckExistentePath, 'utf-8');
     const sqlCadastroCupom = fs.readFileSync(sqlCadastroCupomPath, 'utf-8');
 
-    let valor = 0
-    valor = typeof data.VALOR === 'string'
+    let valor = 0;
+    valor =
+      typeof data.VALOR === 'string'
         ? Number(data.VALOR.replace(',', '.'))
         : Number(data.VALOR);
 
@@ -172,74 +173,90 @@ export class UsuarioService {
       message: 'Cupom registrado com sucesso',
     };
   }
-  
+
   async CadastroAvaliacao(data: CreateAvaliacaoDto) {
-  const sqlCheckCupomPath = path.join(
-    process.cwd(),
-    'src',
-    'site',
-    'usuario',
-    'sql',
-    'avaliacao',
-    'CheckCupomAvaliacao.sql',
-  );
-
-  const sqlCadastroAvaliacaoPath = path.join(
-    process.cwd(),
-    'src',
-    'site',
-    'usuario',
-    'sql',
-    'avaliacao',
-    'CadastroAvaliacao.sql',
-  );
-
-  const sqlCheckCupom = fs.readFileSync(sqlCheckCupomPath, 'utf-8');
-  const sqlCadastroAvaliacao = fs.readFileSync(
-    sqlCadastroAvaliacaoPath,
-    'utf-8',
-  );
-
-  const valor =
-    typeof data.VALOR === 'string'
-      ? Number(data.VALOR.replace(',', '.'))
-      : Number(data.VALOR);
-
-  if (
-    !data.NUMCUPOM ||
-    !data.SERIE ||
-    Number.isNaN(valor) ||
-    valor <= 0 ||
-    !data.AVALIACAO ||
-    data.AVALIACAO < 1 ||
-    data.AVALIACAO > 5
-  ) {
-    throw new BadRequestException(
-      'Parâmetros obrigatórios ausentes ou inválidos',
+    const sqlCheckCupomPath = path.join(
+      process.cwd(),
+      'src',
+      'site',
+      'usuario',
+      'sql',
+      'avaliacao',
+      'CheckCupomAvaliacao.sql',
     );
+
+    const sqlCadastroAvaliacaoPath = path.join(
+      process.cwd(),
+      'src',
+      'site',
+      'usuario',
+      'sql',
+      'avaliacao',
+      'CadastroAvaliacao.sql',
+    );
+
+    const sqlCheckCupom = fs.readFileSync(sqlCheckCupomPath, 'utf-8');
+    const sqlCadastroAvaliacao = fs.readFileSync(
+      sqlCadastroAvaliacaoPath,
+      'utf-8',
+    );
+
+    const valor =
+      typeof data.VALOR === 'string'
+        ? Number(data.VALOR.replace(',', '.'))
+        : Number(data.VALOR);
+
+    if (
+      !data.NUMCUPOM ||
+      !data.SERIE ||
+      Number.isNaN(valor) ||
+      valor <= 0 ||
+      !data.AVALIACAO ||
+      data.AVALIACAO < 1 ||
+      data.AVALIACAO > 5
+    ) {
+      throw new BadRequestException(
+        'Parâmetros obrigatórios ausentes ou inválidos',
+      );
+    }
+
+    const cupomExiste = await this.oracle.query(sqlCheckCupom, {
+      NUMCUPOM: data.NUMCUPOM,
+      SERIE: data.SERIE,
+      VALOR: valor,
+    });
+
+    if (!cupomExiste || cupomExiste.length === 0) {
+      throw new NotFoundException('Cupom não encontrado para avaliação');
+    }
+
+    await this.oracle.query(sqlCadastroAvaliacao, {
+      NUMCUPOM: data.NUMCUPOM,
+      SERIE: data.SERIE,
+      VALOR: valor,
+      AVALIACAO: data.AVALIACAO,
+      FALARSOBRE: data.FALARSOBRE?.trim() || null,
+    });
+
+    return {
+      ok: true,
+      message: 'Avaliação registrada com sucesso',
+    };
   }
 
-  const cupomExiste = await this.oracle.query(sqlCheckCupom, {
-    NUMCUPOM: data.NUMCUPOM,
-    SERIE: data.SERIE,
-    VALOR: valor,
-  });
+  async GetCupom(idusuario: string) {
+    const sqlPath = path.join(
+      process.cwd(),
+      'src',
+      'site',
+      'usuario',
+      'sql',
+      'cupom',
+      'GetCupom.sql',
+    );
 
-  if (!cupomExiste || cupomExiste.length === 0) {
-    throw new NotFoundException('Cupom não encontrado para avaliação');
+    const sql = fs.readFileSync(sqlPath, 'utf-8');
+
+    return this.oracle.query(sql, { idusuario });
   }
-
-  await this.oracle.query(sqlCadastroAvaliacao, {
-    NUMCUPOM: data.NUMCUPOM,
-    SERIE: data.SERIE,
-    VALOR: valor,
-    AVALIACAO: data.AVALIACAO,
-    FALARSOBRE: data.FALARSOBRE?.trim() || null,
-  });
-
-  return {
-    ok: true,
-    message: 'Avaliação registrada com sucesso',
-  };
-}
 }

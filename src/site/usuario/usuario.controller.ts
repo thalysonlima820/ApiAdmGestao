@@ -28,4 +28,9 @@ export class UsuarioController {
   avaliacao(@Body() data: CreateAvaliacaoDto) {
     return this.usuarioService.CadastroAvaliacao(data);
   }
+
+  @Post('getcupom')
+  GetCupom(@Body('idusuario') idusuario: string) {
+    return this.usuarioService.GetCupom(idusuario);
+  }
 }
