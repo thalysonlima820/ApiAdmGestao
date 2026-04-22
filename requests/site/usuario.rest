@@ -27,3 +27,7 @@ Content-Type: application/json
 {
   "idusuario": 3
 }
+
+
+###
+GET http://localhost:3333/adm/site/usuario/sorteio

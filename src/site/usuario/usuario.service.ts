@@ -259,4 +259,20 @@ export class UsuarioService {
 
     return this.oracle.query(sql, { idusuario });
   }
+  
+  async Sorteio() {
+    const sqlPath = path.join(
+      process.cwd(),
+      'src',
+      'site',
+      'usuario',
+      'sql',
+      'sorteio',
+      'sorteio.sql',
+    );
+
+    const sql = fs.readFileSync(sqlPath, 'utf-8');
+
+    return this.oracle.query(sql);
+  }
 }

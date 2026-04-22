@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { UsuarioService } from './usuario.service';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { LoginUsuarioDto } from './dto/login-usuario.dto';
@@ -32,5 +32,9 @@ export class UsuarioController {
   @Post('getcupom')
   GetCupom(@Body('idusuario') idusuario: string) {
     return this.usuarioService.GetCupom(idusuario);
+  }
+  @Get('sorteio')
+  Sorteio() {
+    return this.usuarioService.Sorteio()
   }
 }
