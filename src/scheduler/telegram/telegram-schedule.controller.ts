@@ -12,4 +12,12 @@ export class TelegramScheduleController {
   async sendEmailRelatorioGerencial() {
     return this.telegramScheduleService.enviarTelegramTeste();
   }
+  @Get('dia/anterior')
+  async enviarTelegramVendaDiaAnterior() {
+    return this.telegramScheduleService.enviarTelegramVendaDiaAnterior();
+  }
+  @Get('dia/atual')
+  async enviarTelegramVendaDia() {
+    return this.telegramScheduleService.enviarTelegramVendaDia();
+  }
 }

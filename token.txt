@@ -1,0 +1,14 @@
+
+{
+  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5OTk5Iiwibm9tZSI6ImF0YWNhZGFvIiwicG9saWNpZXMiOlsiZ2V0VXN1YXJpbyJdLCJpYXQiOjE3NzcyOTY4MjAsImV4cCI6MTc3NzM4MzIyMCwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDozMDAwIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDozMDAwIn0.-ouvoGBtqYUIeQt7q3zRyAnxImRcBvrlgUIKsQKtbY4",
+  "usuario": {
+    "CODUSUARIO": "9999",
+    "NOME": "atacadao",
+    "ROUTEPOLICIES": [
+      "getUsuario"
+    ]
+  }
+}
+
+
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5OTk5Iiwibm9tZSI6ImF0YWNhZGFvIiwicG9saWNpZXMiOlsiZ2V0VXN1YXJpbyJdLCJpYXQiOjE3NzcyOTY4MjAsImV4cCI6MTc3NzM4MzIyMCwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDozMDAwIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDozMDAwIn0.-ouvoGBtqYUIeQt7q3zRyAnxImRcBvrlgUIKsQKtbY4

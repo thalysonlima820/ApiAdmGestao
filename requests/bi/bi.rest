@@ -1,7 +1,29 @@
 @url = http://localhost:3333/adm
+@token = {{authenticate.response.body.accessToken}}
+
+#Auth
+### authenticate
+# @name authenticate
+POST {{url}}/auth/login
+Content-Type: application/json
+
+{
+  "NOME": "pcadmin",
+  "SENHA": "5500"
+}
+###
 
 ###
 GET {{url}}/bi
+admgestao: {{token}}
 ###
 GET {{url}}/bi/01-FEB-2026/28-FEB-2026
+admgestao: {{token}}
 
+
+###
+GET {{url}}/telegram/teste
+###
+GET {{url}}/telegram/dia/anterior
+###
+GET {{url}}/telegram/dia/atual

@@ -259,6 +259,21 @@ export class UsuarioService {
 
     return this.oracle.query(sql, { idusuario });
   }
+  async GetCupomItem(numped: string) {
+    const sqlPath = path.join(
+      process.cwd(),
+      'src',
+      'site',
+      'usuario',
+      'sql',
+      'cupom',
+      'GetCupomItem.sql',
+    );
+
+    const sql = fs.readFileSync(sqlPath, 'utf-8');
+
+    return this.oracle.query(sql, { numped });
+  }
   
   async Sorteio() {
     const sqlPath = path.join(

@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { TELEGRAM_IDS_MONITORAMENTO_SERVIDOR } from 'src/apiAdm/telegram/constants/Telegram.constants';
 import { TelegramService } from 'src/apiAdm/telegram/telegram.service';
 import { OracleService } from 'src/common/database/oracle.service';
 import * as fs from 'fs';
@@ -96,9 +95,53 @@ export class TelegramScheduleService {
     const row = await this.oracle.query(sql);
     const vendas = Array.isArray(row) ? row : []
 
-    const ids = TELEGRAM_IDS_MONITORAMENTO_SERVIDOR;
+    const ids = process.env.TELEGRAM_IDS_MONITORAMENTO_SERVIDOR!
     const boot = 'admin';
-    const title = 'Relatório de Vendas por Filial';
+    const title = 'Relatório de Vendas por Filial Mês Atual';
+
+    const msg = this.processarVendas(vendas, title);
+    await this.telegramService.sendToMany(msg, ids, boot, title);
+  }
+
+  async enviarTelegramVendaDiaAnterior() {
+    const sqlPath = path.join(
+      process.cwd(),
+      'src',
+      'scheduler',
+      'telegram',
+      'SQL',
+      'vendaDiaAnteriro.sql',
+    );
+
+    const sql = fs.readFileSync(sqlPath, 'utf-8');
+    const row = await this.oracle.query(sql);
+    const vendas = Array.isArray(row) ? row : []
+
+    const ids = process.env.TELEGRAM_IDS_MONITORAMENTO_SERVIDOR!
+    const boot = 'admin';
+    const title = 'Relatório de Vendas por Filial Dia Anterior';
+
+    const msg = this.processarVendas(vendas, title);
+    await this.telegramService.sendToMany(msg, ids, boot, title);
+  }
+
+  async enviarTelegramVendaDia() {
+    const sqlPath = path.join(
+      process.cwd(),
+      'src',
+      'scheduler',
+      'telegram',
+      'SQL',
+      'vendaDia.sql',
+    );
+
+    const sql = fs.readFileSync(sqlPath, 'utf-8');
+    const row = await this.oracle.query(sql);
+    const vendas = Array.isArray(row) ? row : []
+
+    const ids = process.env.TELEGRAM_IDS_MONITORAMENTO_SERVIDOR!
+    const boot = 'admin';
+    const title = 'Relatório de Vendas por Filial Atual';
 
     const msg = this.processarVendas(vendas, title);
     await this.telegramService.sendToMany(msg, ids, boot, title);

@@ -30,4 +30,4 @@ Content-Type: application/json
 
 
 ###
-GET http://localhost:3333/adm/site/usuario/sorteio
+GET http://localhost:3333/adm/site/usuario/getcupom/item/58165313
