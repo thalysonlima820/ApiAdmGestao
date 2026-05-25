@@ -7,7 +7,7 @@ import { CreateAvaliacaoDto } from './dto/create-avaliacao.dto';
 
 @Controller('site/usuario')
 export class UsuarioController {
-  constructor(private readonly usuarioService: UsuarioService) {}
+  constructor(private readonly usuarioService: UsuarioService) { }
 
   @Post('cadastro')
   cadastro(@Body() data: CreateUsuarioDto) {
@@ -40,5 +40,10 @@ export class UsuarioController {
   @Get('sorteio')
   Sorteio() {
     return this.usuarioService.Sorteio()
+  }
+
+  @Post('impresso/:idusuario')
+  MarcarImpresso(@Param('idusuario') idusuario: number) {
+    return this.usuarioService.MarcarImpresso(idusuario);
   }
 }

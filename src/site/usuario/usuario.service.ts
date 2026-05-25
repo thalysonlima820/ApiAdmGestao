@@ -15,7 +15,7 @@ import { CreateAvaliacaoDto } from './dto/create-avaliacao.dto';
 
 @Injectable()
 export class UsuarioService {
-  constructor(private readonly oracle: OracleService) {}
+  constructor(private readonly oracle: OracleService) { }
 
   async CadastroUsuario(data: CreateUsuarioDto) {
     const sqlCheckPath = path.join(
@@ -152,6 +152,10 @@ export class UsuarioService {
       );
     }
 
+    if (valor < 2) {
+      throw new BadRequestException('Valor menor que R$2,00');
+    }
+
     const cupomExistente = await this.oracle.query(sqlCheckExistente, {
       NUMCUPOM: data.NUMCUPOM,
       SERIE: data.SERIE,
@@ -259,6 +263,7 @@ export class UsuarioService {
 
     return this.oracle.query(sql, { idusuario });
   }
+
   async GetCupomItem(numped: string) {
     const sqlPath = path.join(
       process.cwd(),
@@ -274,7 +279,7 @@ export class UsuarioService {
 
     return this.oracle.query(sql, { numped });
   }
-  
+
   async Sorteio() {
     const sqlPath = path.join(
       process.cwd(),
@@ -290,4 +295,22 @@ export class UsuarioService {
 
     return this.oracle.query(sql);
   }
+
+  async MarcarImpresso(idusuario: number) {
+    await this.oracle.query(
+    `
+      UPDATE DEVBR.CUPOMCLIENTE
+      SET JA_IMPRESSO = 'S'
+      WHERE IDUSUARIO = :IDUSUARIO
+    `,
+    {
+      IDUSUARIO: idusuario,
+    },
+  );
+
+  return {
+    ok: true,
+    message: 'Cupons marcados como impressos',
+  };
+}
 }
