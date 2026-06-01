@@ -5,12 +5,12 @@ WITH MOVIMENTOS AS (
         M.NUMNOTA,
         M.CODEPTO,
         D.DESCRICAO AS DEPARTAMENTO,
-        SUM(M.QT * M.PUNIT) AS VENDA,
+        SUM(M.QT * M.PUNIT) AS VENDA_MOV,
         SUM(M.QT * M.CUSTOFIN) AS CUSTO
     FROM PCMOV M
     JOIN PCDEPTO D
         ON D.CODEPTO = M.CODEPTO
-       WHERE M.DTMOV BETWEEN TO_DATE(
+    WHERE M.DTMOV BETWEEN TO_DATE(
 	            :datainicio,
 	            'DD-MON-YYYY',
 	            'NLS_DATE_LANGUAGE=ENGLISH'
@@ -20,7 +20,7 @@ WITH MOVIMENTOS AS (
 	            'DD-MON-YYYY',
 	            'NLS_DATE_LANGUAGE=ENGLISH'
 	        )
-      AND M.CODOPER = 'S'
+      AND M.CODOPER IN ('S', 'SB')
     GROUP BY
         M.CODFILIAL,
         TRUNC(M.DTMOV),
@@ -28,13 +28,26 @@ WITH MOVIMENTOS AS (
         M.CODEPTO,
         D.DESCRICAO
 ),
+TOTAL_MOV_NOTA AS (
+    SELECT
+        CODFILIAL,
+        DATA_MOV,
+        NUMNOTA,
+        SUM(VENDA_MOV) AS TOTAL_MOV_NOTA
+    FROM MOVIMENTOS
+    GROUP BY
+        CODFILIAL,
+        DATA_MOV,
+        NUMNOTA
+),
 NOTAS AS (
     SELECT
         P.CODFILIAL,
         TRUNC(P.DTSAIDA) AS DATA_SAIDA,
-        P.NUMNOTA
+        P.NUMNOTA,
+        SUM(P.VLTOTAL) AS VLTOTAL
     FROM PCNFSAID P
-        WHERE P.DTSAIDA BETWEEN TO_DATE(
+    WHERE P.DTSAIDA BETWEEN TO_DATE(
 	            :datainicio,
 	            'DD-MON-YYYY',
 	            'NLS_DATE_LANGUAGE=ENGLISH'
@@ -45,7 +58,7 @@ NOTAS AS (
 	            'NLS_DATE_LANGUAGE=ENGLISH'
 	        )
       AND P.DTCANCEL IS NULL
-      AND P.CONDVENDA IN (1, 5)
+      AND P.CONDVENDA IN (1,5,7)
     GROUP BY
         P.CODFILIAL,
         TRUNC(P.DTSAIDA),
@@ -58,12 +71,23 @@ BASE AS (
         M.NUMNOTA,
         M.CODEPTO,
         M.DEPARTAMENTO,
-        M.VENDA,
+
+        CASE
+            WHEN TM.TOTAL_MOV_NOTA = 0 THEN 0
+            ELSE
+                (M.VENDA_MOV / TM.TOTAL_MOV_NOTA) * N.VLTOTAL
+        END AS VENDA,
+
         M.CUSTO
     FROM MOVIMENTOS M
-    JOIN NOTAS N
+    INNER JOIN TOTAL_MOV_NOTA TM
+        ON TM.CODFILIAL = M.CODFILIAL
+       AND TM.NUMNOTA = M.NUMNOTA
+       AND TM.DATA_MOV = M.DATA_MOV
+    INNER JOIN NOTAS N
         ON N.CODFILIAL = M.CODFILIAL
        AND N.NUMNOTA = M.NUMNOTA
+       AND N.DATA_SAIDA = M.DATA_MOV
 ),
 NOTA_DEPTO_PRINCIPAL AS (
     SELECT

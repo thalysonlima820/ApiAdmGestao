@@ -1,27 +1,45 @@
 WITH MOVIMENTOS AS (
     SELECT
         M.CODFILIAL,
+        TRUNC(M.DTMOV) AS DATA_MOV,
         M.NUMNOTA,
-        SUM(M.QT * M.PUNIT) AS VENDA,
+        SUM(M.QT * M.PUNIT) AS VENDA_MOV,
         SUM(M.QT * M.CUSTOFIN) AS CUSTO
     FROM PCMOV M
-   WHERE TRUNC(M.DTMOV) = TRUNC(SYSDATE) - 1
-      AND M.CODOPER = 'S'
+    WHERE TRUNC(M.DTMOV) = TRUNC(SYSDATE) - 1
+      AND M.CODOPER IN ('S', 'SB')
     GROUP BY
         M.CODFILIAL,
+        TRUNC(M.DTMOV),
         M.NUMNOTA
+),
+
+TOTAL_MOV_NOTA AS (
+    SELECT
+        CODFILIAL,
+        DATA_MOV,
+        NUMNOTA,
+        SUM(VENDA_MOV) AS TOTAL_MOV_NOTA
+    FROM MOVIMENTOS
+    GROUP BY
+        CODFILIAL,
+        DATA_MOV,
+        NUMNOTA
 ),
 
 NOTAS AS (
     SELECT
         P.CODFILIAL,
-        P.NUMNOTA
+        TRUNC(P.DTSAIDA) AS DATA_SAIDA,
+        P.NUMNOTA,
+        SUM(P.VLTOTAL) AS VLTOTAL
     FROM PCNFSAID P
     WHERE TRUNC(P.DTSAIDA) = TRUNC(SYSDATE) - 1
       AND P.DTCANCEL IS NULL
-      AND P.CONDVENDA IN (1, 5)
+      AND P.CONDVENDA IN (1, 5, 7)
     GROUP BY
         P.CODFILIAL,
+        TRUNC(P.DTSAIDA),
         P.NUMNOTA
 ),
 
@@ -29,20 +47,23 @@ BASE AS (
     SELECT
         M.CODFILIAL,
         M.NUMNOTA,
-        M.VENDA,
+
+        CASE
+            WHEN TM.TOTAL_MOV_NOTA = 0 THEN 0
+            ELSE
+                (M.VENDA_MOV / TM.TOTAL_MOV_NOTA) * N.VLTOTAL
+        END AS VENDA,
+
         M.CUSTO
     FROM MOVIMENTOS M
-    JOIN NOTAS N
+    INNER JOIN TOTAL_MOV_NOTA TM
+        ON TM.CODFILIAL = M.CODFILIAL
+       AND TM.NUMNOTA = M.NUMNOTA
+       AND TM.DATA_MOV = M.DATA_MOV
+    INNER JOIN NOTAS N
         ON N.CODFILIAL = M.CODFILIAL
        AND N.NUMNOTA = M.NUMNOTA
-),
-
-NUMVENDAS AS (
-    SELECT
-        CODFILIAL,
-        COUNT(*) AS NUMVENDAS
-    FROM BASE
-    GROUP BY CODFILIAL
+       AND N.DATA_SAIDA = M.DATA_MOV
 ),
 
 VENDA AS (
@@ -50,25 +71,27 @@ VENDA AS (
         B.CODFILIAL,
         ROUND(SUM(B.CUSTO), 2) AS CUSTO,
         ROUND(SUM(B.VENDA), 2) AS VENDA,
-        NV.NUMVENDAS,
-        ROUND(SUM(B.VENDA) - SUM(B.CUSTO), 2) AS LUCRO,
+        COUNT(DISTINCT B.NUMNOTA) AS NUMVENDAS,
         ROUND(
-            SUM(B.VENDA) / NULLIF(NV.NUMVENDAS, 0),
+            SUM(B.VENDA) - SUM(B.CUSTO),
+            2
+        ) AS LUCRO,
+        ROUND(
+            SUM(B.VENDA) /
+            NULLIF(COUNT(DISTINCT B.NUMNOTA), 0),
             2
         ) AS TICKET_MEDIO,
         CASE
             WHEN SUM(B.VENDA) = 0 THEN 0
             ELSE ROUND(
-                ((SUM(B.VENDA) - SUM(B.CUSTO)) * 100) / SUM(B.VENDA),
+                ((SUM(B.VENDA) - SUM(B.CUSTO)) * 100) /
+                SUM(B.VENDA),
                 2
             )
         END AS MARGEM
     FROM BASE B
-    JOIN NUMVENDAS NV
-        ON NV.CODFILIAL = B.CODFILIAL
     GROUP BY
-        B.CODFILIAL,
-        NV.NUMVENDAS
+        B.CODFILIAL
 ),
 
 META AS (
@@ -85,8 +108,15 @@ META AS (
 SELECT
     V.*,
     NVL(M.META, 0) AS META,
-    ROUND((V.VENDA / NULLIF(M.META, 0)) * 100, 2) AS PERCENTUAL_CARREGADO
+    NVL(
+        ROUND(
+            (V.VENDA / NULLIF(M.META, 0)) * 100,
+            2
+        ),
+        0
+    ) AS PERCENTUAL_CARREGADO
 FROM VENDA V
 LEFT JOIN META M
     ON V.CODFILIAL = M.CODFILIAL
-ORDER BY V.CODFILIAL
+ORDER BY
+    V.CODFILIAL

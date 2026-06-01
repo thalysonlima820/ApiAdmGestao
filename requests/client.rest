@@ -28,7 +28,7 @@ Content-Type: application/json
   "CODUSUARIO": "1",
   "NOME": "pcadmin",
   "SENHA": "5500",
-  "ROUTEPOLICIES": ["getUsuario", "upsertUsuario"],
+  "ROUTEPOLICIES": [""],
   "EMAIL": "admin@gmail.com"
 }
 ###
